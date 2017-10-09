@@ -1,11 +1,18 @@
 package pl.edu.uksw.SportResultsCatalogue.model.entity;
 
+import java.sql.Time;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Period;
+import java.time.temporal.TemporalUnit;
 import java.util.Date;
+import java.util.Timer;
 
 public class PersonResultDTO {
 
     private long playerNumber;
-    private long timeResult;
+    private String timeResult;
     private String firstName;
     private String lastName;
     private Date birthDate;
@@ -15,7 +22,7 @@ public class PersonResultDTO {
 
     public PersonResultDTO(final Result result) {
         this.playerNumber = result.getPlayerNumber();
-        this.timeResult = result.getTimeResult();
+        this.timeResult = generateTimeResult(result.getTimeResult());
         this.firstName = result.getFirstName();
         this.lastName = result.getLastName();
         this.birthDate = result.getBirthDate();
@@ -31,11 +38,11 @@ public class PersonResultDTO {
         this.playerNumber = playerNumber;
     }
 
-    public long getTimeResult() {
+    public String getTimeResult() {
         return timeResult;
     }
 
-    public void setTimeResult(long timeResult) {
+    public void setTimeResult(String timeResult) {
         this.timeResult = timeResult;
     }
 
@@ -77,5 +84,16 @@ public class PersonResultDTO {
 
     public void setTeamName(String teamName) {
         this.teamName = teamName;
+    }
+
+    private String generateTimeResult(final Long longResult) {
+        String result;
+        LocalTime duration = LocalTime.ofSecondOfDay(longResult);
+        int hours = duration.getHour();
+        duration = duration.minusHours(Integer.toUnsignedLong(hours));
+        int minutes = duration.getMinute();
+        duration = duration.minusMinutes(Integer.toUnsignedLong(minutes));
+        result = String.format("%02d:%02d:%02d", hours, minutes, duration.getSecond());
+        return result;
     }
 }
